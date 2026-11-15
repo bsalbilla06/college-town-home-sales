@@ -1,31 +1,175 @@
 <!DOCTYPE html>
-<!-- A placeholder from the Home Sales template. Replace this file with your site's first page. -->
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Under construction</title>
-  <!-- An empty icon, so the browser doesn't log an error looking for favicon.ico -->
+  <title>College-Town Home Sales Explorer</title>
+  <meta name="description" content="Explore 35,371 home sales near 11 college campuses: median price, price per square foot, days on market, and distance to campus.">
   <link rel="icon" href="data:,">
-  <style>
-    :root { color-scheme: light dark; }
-    body {
-      max-width: 40rem;
-      margin: 0 auto;
-      padding: 3rem 1rem;
-      font-family: system-ui, sans-serif;
-      line-height: 1.5;
-    }
-    footer { margin-top: 3rem; font-size: 0.875rem; opacity: 0.75; }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <main>
-    <h1>This site is under construction</h1>
-    <p>It will show findings from the College-town home sales dataset.</p>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap">
+      <p class="eyebrow">College-town home sales, 2023&ndash;2026</p>
+      <h1>What a house costs near campus</h1>
+      <p class="lede">
+        An explorer for <strong id="n-sales">&hellip;</strong> recorded home sales around
+        <strong id="n-campuses">&hellip;</strong> university campuses in
+        <strong id="n-cities">&hellip;</strong> college towns. Compare towns by price, price per
+        square foot, how long homes sit on the market, and how close they are to campus.
+      </p>
+      <p class="meta-line">
+        Sale dates <span id="date-range">&hellip;</span>. Data collected March 2026.
+      </p>
+    </div>
+  </header>
+
+  <main id="main" class="wrap">
+
+    <section class="cards" aria-label="Headline figures">
+      <article class="card">
+        <h2>Median sale price</h2>
+        <p class="figure" id="kpi-median-price">&hellip;</p>
+        <p class="caption">Across all kept sales</p>
+      </article>
+      <article class="card">
+        <h2>Median price per sq ft</h2>
+        <p class="figure" id="kpi-ppsf">&hellip;</p>
+        <p class="caption">Homes with a recorded living area</p>
+      </article>
+      <article class="card">
+        <h2>Median days on market</h2>
+        <p class="figure" id="kpi-dom">&hellip;</p>
+        <p class="caption">Listing to accepted offer</p>
+      </article>
+      <article class="card">
+        <h2>Sales within 3 miles</h2>
+        <p class="figure" id="kpi-near">&hellip;</p>
+        <p class="caption">Of all kept sales</p>
+      </article>
+    </section>
+
+    <section class="panel" id="city-section">
+      <div class="panel-head">
+        <h2>City comparison</h2>
+        <p>Click a column heading to sort. Click a row to highlight that town in the chart below.</p>
+      </div>
+      <div class="table-scroll">
+        <table id="city-table">
+          <thead>
+            <tr>
+              <th scope="col" data-sort="city" class="text">City</th>
+              <th scope="col" data-sort="university" class="text">Nearest campus</th>
+              <th scope="col" data-sort="sales" class="num" aria-sort="none">Sales</th>
+              <th scope="col" data-sort="median_price" class="num" aria-sort="descending">Median price</th>
+              <th scope="col" data-sort="median_ppsf" class="num" aria-sort="none">Median $/sq ft</th>
+              <th scope="col" data-sort="median_sqft" class="num" aria-sort="none">Median sq ft</th>
+              <th scope="col" data-sort="median_dom" class="num" aria-sort="none">Median days on market</th>
+              <th scope="col" data-sort="median_miles" class="num" aria-sort="none">Median miles to campus</th>
+              <th scope="col" data-sort="share_under_3_mi" class="num" aria-sort="none">Within 3 mi</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="footnote">
+        Days on market uses only sales with both a listing and a contract date
+        (<span id="dom-coverage">&hellip;</span> of kept sales). A blank date is not counted as zero days.
+      </p>
+    </section>
+
+    <section class="panel" id="scatter-section">
+      <div class="panel-head">
+        <h2>Every sale, one dot</h2>
+        <p>Living area against sale price. Use the controls to filter by campus and town.</p>
+      </div>
+      <form class="controls" id="scatter-controls">
+        <label>
+          Campus
+          <select id="filter-campus">
+            <option value="">All campuses</option>
+          </select>
+        </label>
+        <label>
+          Town
+          <select id="filter-city">
+            <option value="">All towns</option>
+          </select>
+        </label>
+      </form>
+      <div class="chart-holder">
+        <canvas id="scatter" role="img" aria-label="Scatter plot of living area against sale price"></canvas>
+      </div>
+      <p class="footnote" id="scatter-note">&hellip;</p>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Median price by year of sale</h2>
+        <p>All kept sales, grouped by the calendar year the sale closed.</p>
+      </div>
+      <div class="chart-holder short">
+        <canvas id="trend" role="img" aria-label="Bar chart of median sale price by year"></canvas>
+      </div>
+      <p class="footnote">
+        2026 covers only January through March, so treat that bar as a partial year.
+      </p>
+    </section>
+
+    <section class="panel" id="notes">
+      <div class="panel-head">
+        <h2>How these numbers were made</h2>
+      </div>
+      <ul class="rules">
+        <li>
+          <strong>Implausible prices are dropped.</strong> We keep sales from
+          <span id="rule-min">&hellip;</span> to <span id="rule-max">&hellip;</span>.
+          That removes <span id="rule-low">&hellip;</span> sales under the floor (including one at $0)
+          and <span id="rule-high">&hellip;</span> above the ceiling (up to $81.5 million), for
+          <span id="rule-kept">&hellip;</span> of <span id="rule-total">&hellip;</span> rows.
+        </li>
+        <li>
+          <strong>Price per square foot</strong> uses only homes with a living area above zero;
+          127 rows report zero square feet and cannot be divided.
+        </li>
+        <li>
+          <strong>Days on market</strong> is the gap from listing to accepted offer, not to closing.
+          Closing adds roughly a month. We do not treat a missing date as zero days.
+        </li>
+        <li>
+          <strong>No de-duplication by address.</strong> 66 rows share a street address, mostly condo
+          units in one State College building. Each is a separate sale with its own listing id.
+        </li>
+        <li>
+          <strong>Home type is ignored.</strong> The source labels nearly every row "single family",
+          including condo units, so we do not filter or group by it.
+        </li>
+        <li>
+          <strong>Medians, not means.</strong> A handful of very large or unusual properties would
+          pull averages upward, so every headline figure here is a median.
+        </li>
+      </ul>
+      <p class="footnote">
+        Figures are recomputed from the raw CSV by
+        <code>scripts/build_site_data.py</code>, which writes <code>data/derived/site_data.json</code>.
+        The five original dataset files in <code>data/</code> are unchanged.
+      </p>
+    </section>
   </main>
-  <footer>
-    <p>Data: College-town home sales dataset, version 1.0 (2026). University of Illinois-Deloitte Foundation Center for Business Emerging Technologies. Data collected March 2026.</p>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>
+        College-town home sales dataset, version 1.0 (2026). University of Illinois-Deloitte
+        Foundation Center for Business Emerging Technologies. Data collected March 2026.
+      </p>
+      <p><a href="https://github.com/bsalbilla06/college-town-home-sales">Source and code on GitHub</a></p>
+    </div>
   </footer>
+
+  <script src="app.js"></script>
 </body>
 </html>

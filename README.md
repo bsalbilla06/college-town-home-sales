@@ -1,51 +1,61 @@
-# [Your site's title]
+# College-Town Home Sales Explorer
 
-## Start here (delete this section before you submit)
-
-This repository is your starting point for the Home Sales case. It already holds the dataset, its description sheet, project instructions for your AI coding agent, and outlines of the README and agent log that the case asks for.
-
-1. **Turn on GitHub Pages.** In this repository, open **Settings**, then **Pages**. Under "Build and deployment," set **Source** to **GitHub Actions**. GitHub may suggest workflows to add. Skip them: this repository already has one, `.github/workflows/pages.yml`.
-2. **Publish for the first time.** Open the **Actions** tab, choose **Publish site to GitHub Pages** in the sidebar, click **Run workflow**, then click **Run workflow** again to confirm. If the tab already shows a failed run from when you created the repository, that's expected: Pages wasn't turned on yet. When the new run shows a green check, your site is at `https://your-username.github.io/your-repo-name/`. It shows a placeholder page until you replace `index.html`.
-
-    From then on, every push to the main branch publishes the site within a few minutes. If the live site doesn't show a change, open the **Actions** tab. A red X means the publish failed, and the run's log says why.
-3. **Open the repository in your AI coding agent.** Its project instructions are in `AGENTS.md`. If your agent reads its instructions from a file with a different name, check its documentation and copy `AGENTS.md` to that name. Add to the instructions as you learn what your agent needs.
-4. **Read `docs/data_description_sheet.md`** before you ask the agent for any analysis.
-5. **Build in small steps,** as the setup guide describes. Add an entry to `AGENT_LOG.md` each time you work with the agent.
-6. **Fill in every section below** before you submit.
-
-| Path | What it is |
-|---|---|
-| `index.html` | A placeholder page. Replace it with your site. |
-| `data/college_town_home_sales.csv` | The dataset, version 1.0: 35,442 rows. Your site reads this file. |
-| `data/college_town_home_sales.xlsx`, `.sqlite`, `.duckdb`, `.parquet` | The same data in Excel, SQLite, DuckDB and Parquet formats, with identical values |
-| `docs/data_description_sheet.md` | What every column means, and five problems in the data |
-| `AGENTS.md` | Project instructions for your AI coding agent |
-| `AGENT_LOG.md` | Your agent log |
-| `scripts/` | Scripts that make smaller data files for the site |
-| `.github/workflows/pages.yml` | Publishes the site to GitHub Pages each time you push to main. It publishes your files as they are. If you switch to a framework that needs a build step, have your agent update it. |
-
-Don't edit any of the five dataset files. Your site needs only the CSV file. The other formats make it easier to check numbers a second way, for example with a pivot table in Excel or a SQL query on the SQLite file. In SQLite and DuckDB, the table is named `home_sales`.
+An interactive website built from the college-town home sales dataset: 35,442 recorded sales around
+11 university campuses in 18 college towns, collected March 2026.
 
 ## What this site is for
 
-_Replace this line with your site's question and audience, or a short description of the site._
+For anyone sizing up a college town — a student's family, a first-time buyer, or someone comparing
+campuses — the site answers one plain question in a few views: **what does a home cost near campus,
+and how long does it take to sell?**
+
+The page combines:
+
+- **Four headline figures:** median sale price, median price per square foot, median days on market,
+  and the share of sales within 3 miles of a campus.
+- **A sortable city table:** 18 towns with sales count, median price, median price per sq ft, median
+  size, median days on market, median distance to campus, and the share of sales within 3 miles.
+- **A scatter of every kept sale:** living area against sale price, filterable by campus and town,
+  with median guide lines for the current filter.
+- **A yearly trend:** median sale price for sales closing in 2023, 2024, 2025 and the part of 2026
+  in the file.
 
 ## Live site
 
-https://your-username.github.io/your-repo-name/
+https://bsalbilla06.github.io/college-town-home-sales/
 
 ## Data notes
 
-_Replace this line. Say which rows you left out and why, and how each figure on the site is defined. "Five things that will bite you" in the description sheet lists the problems to cover._
+The page is built from `data/derived/site_data.json`, regenerated from the raw CSV by
+`scripts/build_site_data.py`. The five original dataset files are untouched.
+
+Rules applied, and stated on the page:
+
+- **Prices:** sales from $10,000 to $5,000,000 are kept. This drops 40 sales under $10,000 (one at
+  $0) and 31 over $5,000,000 (up to $81,510,000). **35,371 of 35,442 rows are kept.**
+- **Price per sq ft:** only on rows with `living_area_sqft > 0` (127 rows report zero square feet).
+- **Days on market:** `contract_date - list_date`, the standard listing-to-accepted-offer measure,
+  not listing to closing. Only rows with both dates are used (79.2% of kept sales); a blank is not
+  treated as zero. Rows where the contract date precedes the listing date are also dropped from this
+  measure.
+- **No address de-duplication.** 66 rows share a street address, mostly condo units in one State
+  College building; each has its own `listing_id` and is a real sale.
+- **`home_type` is not used.** The source labels nearly every row "single family", so it is not
+  trustworthy for grouping.
+- **Medians everywhere.** Means would be distorted by the long upper tail (mostly in the size and
+  distance columns), so every figure is a median.
+- **Distance** is straight-line miles to the campus landmark, never driving distance.
+- **2026 is partial:** the file ends 2026-03-25.
 
 ## Tools we used
 
-_Replace this line with your AI coding agent or agents, and any libraries and other tools you used._
+- OpenCode as the coding agent (driving GitHub through the browser: template, repository, Pages,
+  About link).
+- Plain HTML, CSS and JavaScript with the Canvas API, no libraries or build step, so the template's
+  `pages.yml` publishes the repository as is.
+- Python with pandas in `scripts/build_site_data.py` to compute the aggregates once at build time.
 
 ## Citation
 
-College-town home sales dataset, version 1.0 (2026). University of Illinois-Deloitte Foundation Center for Business Emerging Technologies. Data collected March 2026.
-
-## Who did what
-
-_For teams: replace this line with each member's name and what they did. If you worked alone, delete this section._
+College-town home sales dataset, version 1.0 (2026). University of Illinois-Deloitte Foundation
+Center for Business Emerging Technologies. Data collected March 2026.

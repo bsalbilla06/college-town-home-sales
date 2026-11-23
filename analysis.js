@@ -125,7 +125,7 @@ const Analysis = (() => {
     // All rows, no price rule.
     const out = meanMedianGaps(data, (r) => r.city).map((o) => ({ ...o, city: o.label }))
       .sort((a, b) => b.gapPct - a.gapPct);
-    return { rows: out };
+    return { rows: out, winner: out[0] || null };
   }
 
   /* ------------------------------ Q3 ------------------------------- */

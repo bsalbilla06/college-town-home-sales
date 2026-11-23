@@ -188,8 +188,6 @@ const Charts = (() => {
    * }
    */
   function hbar(container, opts) {
-    // Wait for the chart box to have a width; a slow stylesheet can leave it at 0.
-    if (container.clientWidth < 40) return;
     const data = opts.data.filter((d) => Number.isFinite(d.value));
     if (!data.length) return empty(container, opts.emptyText || 'No sales match these settings.');
 
@@ -269,7 +267,6 @@ const Charts = (() => {
 
   /** Bars for positive and negative percent values with a zero line. */
   function divergingBar(container, opts) {
-    if (container.clientWidth < 40) return;
     const data = opts.data.filter((d) => Number.isFinite(d.value));
     if (!data.length) return empty(container, opts.emptyText || 'Nothing to show for these settings.');
 
@@ -370,7 +367,6 @@ const Charts = (() => {
 
   /** Dot plot with optional quartile ranges per category. */
   function dotPlot(container, opts) {
-    if (container.clientWidth < 40) return;
     const data = opts.data.filter((d) => Number.isFinite(d.value));
     if (!data.length) return empty(container, opts.emptyText || 'No sales match these settings.');
 
@@ -592,6 +588,6 @@ const Charts = (() => {
 
   return {
     el, text, hbar, divergingBar, columns, dotPlot, slope, histogram, grouped,
-    empty, tipHTML, register, redrawAll, redraw, hideTip, textWidth, niceMax, ticks,
+    empty, tipHTML, bindTip, register, redrawAll, redraw, hideTip, textWidth, niceMax, ticks,
   };
 })();

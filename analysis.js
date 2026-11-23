@@ -68,7 +68,7 @@ const Analysis = (() => {
         stories: rows.stories[i],
         year: rows.year[i],
         month: rows.month[i],
-        // Days on market exists only when both dates are present.
+        // Days on market exists when both dates are present.
         dom: rows.dom[i],
       };
     }

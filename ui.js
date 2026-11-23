@@ -237,8 +237,8 @@ function renderQ3() {
   const res = Analysis.q3(MODEL.data);
   const changed = res.changed;
   const parts = changed.map((c) => {
-    const dir = c.moved > 0 ? 'down' : 'up';
-    return `${c.city} moves ${dir} ${Math.abs(c.moved)} place${Math.abs(c.moved) === 1 ? '' : 's'}, from rank ${c.rankValid} to ${c.rankAll}`;
+    const dir = c.moved > 0 ? 'up' : 'down';
+    return `${c.city} moves ${dir} ${Math.abs(c.moved)} place${Math.abs(c.moved) === 1 ? '' : 's'}, from rank ${c.rankAll} to ${c.rankValid}`;
   });
   setAnswer('q3-answer', {
     lead: changed.length === 0

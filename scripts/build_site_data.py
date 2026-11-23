@@ -53,9 +53,11 @@ def main() -> None:
         df[c] = pd.to_datetime(df[c], errors="coerce")
 
     df["city_full"] = df["city"] + ", " + df["state"]
-    # Days on market. The gap is kept even when a contract date precedes the
-    # listing date, so the page can decide how to treat those rows.
-    df["dom"] = (df["contract_date"] - df["list_date"]).dt.days
+    # Days on market: contract date minus listing date, only where both dates
+    # exist. A negative gap means the two dates disagree, so it is dropped too.
+    df["dom"] = (df["contract_date"] - df["list_date"]).dt.days.where(
+        lambda d: d >= 0
+    )
     df["year"] = df["sale_date"].dt.year
     df["month"] = df["sale_date"].dt.month
 

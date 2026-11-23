@@ -214,7 +214,7 @@ const Charts = (() => {
     }
 
     data.forEach((d, i) => {
-      const cy = rowH * (i + 0.5);
+      const cy = colTop + rowH * (i + 0.5);
       const w = Math.max(2, gx(Math.abs(d.value)));
       const answer = !!d.highlight;
       const g = el('g', {}, svg);
@@ -228,17 +228,30 @@ const Charts = (() => {
         }, g);
       }
 
+      // A soft wash behind the answer row makes the highlighted city easy to
+      // find without relying on colour alone.
+      if (answer) {
+        el('rect', {
+          x: 0, y: colTop + rowH * i, width: f.W, height: rowH,
+          class: 'answer-row', 'pointer-events': 'none',
+        }, g);
+      }
+
       const bar = el('rect', {
-        x: 0, y: cy - barH / 2, width: w, height: barH, rx: 3,
+        x: f.padLeft, y: cy - barH / 2, width: w, height: barH, rx: 3,
         class: `bar${answer ? ' is-answer' : ''}`,
       }, g);
 
-      text(g, -8, cy + 4, d.label, {
+      text(g, f.padLeft - 8, cy + 4, d.label, {
         class: `cat-label${answer ? ' is-answer' : ''}`,
         'text-anchor': 'end',
       });
 
-      text(g, w + 6, cy + 4, fmt(d.value), { class: 'value-label' });
+      const place = valuePlacement(f.padLeft, w, textWidth(fmt(d.value), 11.5), f.padLeft + plotW, longestValue);
+      text(g, place.x, cy + 4, fmt(d.value), {
+        class: `value-label${place.inside ? ' is-inside' : ''}`,
+        'text-anchor': place.anchor,
+      });
 
       bindTip(bar, d.tipHTML || tipHTML(d.label, [[opts.valueLabel || 'Value', fmt(d.value)]]));
     });
@@ -365,7 +378,7 @@ const Charts = (() => {
     const fmt = fmt0;
     const vals = data.flatMap((d) => [d.value, d.q1 ?? d.value, d.q3 ?? d.value]);
     const axisMax = niceMax(Math.max(...vals), 4);
-    const gx = (v) => (v / axisMax) * plotW;
+    const gx = (v) => f.padLeft + (v / axisMax) * plotW;
     const rowH = plotH / data.length;
 
     for (const t of ticks(axisMax, 4)) {
@@ -390,7 +403,7 @@ const Charts = (() => {
         class: 'dot', ...(answer ? {} : { style: 'fill:var(--ink-3)' }),
       }, g);
 
-      text(g, -8, cy + 4, d.label, { class: `cat-label${answer ? ' is-answer' : ''}`, 'text-anchor': 'end' });
+      text(g, f.padLeft - 8, cy + 4, d.label, { class: `cat-label${answer ? ' is-answer' : ''}`, 'text-anchor': 'end' });
       text(g, gx(d.value) + (answer ? 11 : 9), cy + 4, fmt(d.value), { class: 'value-label' });
 
       bindTip(dot, d.tipHTML || tipHTML(d.label, [[opts.valueLabel || 'Median', fmt(d.value)]]));

@@ -68,7 +68,7 @@ const Analysis = (() => {
         stories: rows.stories[i],
         year: rows.year[i],
         month: rows.month[i],
-        // Days on market exists when both dates are present.
+        // Days on market exists only when both dates are present.
         dom: rows.dom[i],
       };
     }
@@ -125,7 +125,7 @@ const Analysis = (() => {
     // All rows, no price rule.
     const out = meanMedianGaps(data, (r) => r.city).map((o) => ({ ...o, city: o.label }))
       .sort((a, b) => b.gapPct - a.gapPct);
-    return { rows: out, winner: out[0] || null };
+    return { rows: out };
   }
 
   /* ------------------------------ Q3 ------------------------------- */

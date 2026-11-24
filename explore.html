@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Explorer: College-Town Home Sales</title>
+  <meta name="description" content="Filter 35,442 college-town home sales by campus, city, year, price, size, distance and home features. Map, comparison and sortable table.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f6b5c'/%3E%3Cpath d='M8 17 16 9l8 8v7H8z' fill='%23f2c14e'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+  <link rel="stylesheet" href="styles.css?v=4">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <div id="loading" class="loading" role="status" aria-live="polite">
+    <div class="loading-box">
+      <span class="spinner" aria-hidden="true"></span>
+      <p>Loading 35,442 home sales&hellip;</p>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-text">College-Town<small>Home Sales</small></span>
+      </a>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="index.html">Analysis</a>
+        <a href="explore.html" aria-current="page">Explorer</a>
+        <a href="index.html#data-methods">Data and methods</a>
+      </nav>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.2 5.2l1.9 1.9M16.9 16.9l1.9 1.9M18.8 5.2l-1.9 1.9M7.1 16.9l-1.9 1.9"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.2A8.4 8.4 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero explorer-hero">
+      <div class="wrap">
+        <p class="eyebrow">Explorer</p>
+        <h1>Filter the sales, and the numbers follow</h1>
+        <p class="hero-lede">
+          Every filter is kept in the page address, so copying the link reproduces the view.
+          Click a marker on the map to narrow to that campus or city.
+        </p>
+      </div>
+    </section>
+
+    <div class="wrap explorer">
+      <section class="card" aria-labelledby="filters-h">
+        <header class="filters-head">
+          <h2 id="filters-h">Filters</h2>
+          <div class="filters-actions">
+            <button type="button" class="btn btn-ghost" id="reset-filters">Reset all</button>
+            <button type="button" class="btn btn-primary" id="copy-link">Copy link to this view</button>
+          </div>
+        </header>
+
+        <div class="filter-grid">
+          <label class="field" for="f-campus">
+            Campus area
+            <select id="f-campus"></select>
+          </label>
+
+          <label class="field" for="f-city">
+            City
+            <select id="f-city"></select>
+          </label>
+
+          <label class="field" for="f-year">
+            Year of sale
+            <select id="f-year"></select>
+          </label>
+
+          <div class="field wide">
+            <span class="field-label" id="beds-label">Bedrooms</span>
+            <div class="field-inline">
+              <label>Min <input type="number" id="f-beds-min" min="0" max="10" step="1" value="0" inputmode="numeric" aria-label="Minimum bedrooms"></label>
+              <span class="range-dash" aria-hidden="true">to</span>
+              <label>Max <input type="number" id="f-beds-max" min="0" max="10" step="1" value="10" inputmode="numeric" aria-label="Maximum bedrooms"></label>
+            </div>
+          </div>
+
+          <div class="field wide">
+            <span class="field-label">Sale price</span>
+            <div class="range-wrap">
+              <div class="range-slider" id="price-slider"></div>
+              <div class="range-inputs">
+                <label>
+                  Min price ($)
+                  <input type="number" id="f-price-min" min="10000" max="5000000" step="1000" value="10000" inputmode="numeric">
+                </label>
+                <span class="range-dash" aria-hidden="true">to</span>
+                <label>
+                  Max price ($)
+                  <input type="number" id="f-price-max" min="10000" max="5000000" step="1000" value="5000000" inputmode="numeric">
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="field wide">
+            <span class="field-label">Living area (sq ft)</span>
+            <div class="range-wrap">
+              <div class="range-slider" id="sqft-slider"></div>
+              <div class="range-inputs">
+                <label>
+                  Min
+                  <input type="number" id="f-sqft-min" min="200" max="8000" step="50" value="200" inputmode="numeric">
+                </label>
+                <span class="range-dash" aria-hidden="true">to</span>
+                <label>
+                  Max
+                  <input type="number" id="f-sqft-max" min="200" max="8000" step="50" value="8000" inputmode="numeric">
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="field wide">
+            <span class="field-label">Distance from campus (miles)</span>
+            <div class="range-wrap">
+              <div class="range-slider" id="miles-slider"></div>
+              <div class="range-inputs">
+                <label>
+                  Min
+                  <input type="number" id="f-miles-min" min="0" max="15" step="0.5" value="0" inputmode="decimal">
+                </label>
+                <span class="range-dash" aria-hidden="true">to</span>
+                <label>
+                  Max
+                  <input type="number" id="f-miles-max" min="0" max="15" step="0.5" value="15" inputmode="decimal">
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="field wide">
+            <span class="field-label">Year built</span>
+            <div class="range-wrap">
+              <div class="range-slider" id="built-slider"></div>
+              <div class="range-inputs">
+                <label>
+                  Min
+                  <input type="number" id="f-built-min" min="1900" max="2026" step="1" value="1900" inputmode="numeric">
+                </label>
+                <span class="range-dash" aria-hidden="true">to</span>
+                <label>
+                  Max
+                  <input type="number" id="f-built-max" min="1900" max="2026" step="1" value="2026" inputmode="numeric">
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <label class="field" for="f-garage">
+            Garage
+            <select id="f-garage">
+              <option value="">Any</option><option value="yes">Yes</option><option value="no">No</option><option value="unknown">Unknown</option>
+            </select>
+          </label>
+
+          <label class="field" for="f-basement">
+            Basement
+            <select id="f-basement">
+              <option value="">Any</option><option value="yes">Yes</option><option value="no">No</option><option value="unknown">Unknown</option>
+            </select>
+          </label>
+
+          <label class="field" for="f-fireplace">
+            Fireplace
+            <select id="f-fireplace">
+              <option value="">Any</option><option value="yes">Yes</option><option value="no">No</option><option value="unknown">Unknown</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="active-filters" id="active-filters" aria-live="polite"></div>
+      </section>
+
+      <section class="card kpis-card" aria-labelledby="kpi-h">
+        <h2 id="kpi-h" class="sr-only">Key numbers for this view</h2>
+        <div class="kpi-grid" id="kpi-grid">
+          <div class="kpi"><dt>Sales</dt><dd id="kpi-sales">—</dd><p>Matching every filter</p></div>
+          <div class="kpi"><dt>Median sale price</dt><dd id="kpi-price">—</dd><p>Middle value of matched sales</p></div>
+          <div class="kpi"><dt>Median price per sq ft</dt><dd id="kpi-ppsf">—</dd><p>Sales with a recorded area</p></div>
+          <div class="kpi"><dt>Median days on market</dt><dd id="kpi-dom">—</dd><p>Listing to accepted offer</p></div>
+          <div class="kpi"><dt>Median distance</dt><dd id="kpi-miles">—</dd><p>Straight line to campus</p></div>
+          <div class="kpi"><dt>Median living area</dt><dd id="kpi-sqft">—</dd><p>Finished square feet</p></div>
+        </div>
+      </section>
+
+      <div class="explore-grid">
+        <section class="card map-card" aria-labelledby="map-h">
+          <header class="panel-head">
+            <h2 id="map-h">Campus and city map</h2>
+            <p>Click a campus for its area, or a city dot for a single city. Click empty space to clear.</p>
+          </header>
+          <div class="map-holder" id="map-holder"></div>
+          <p class="map-legend">
+            <span class="legend-chip"><span class="legend-swatch swatch-campus"></span>Campus landmark</span>
+            <span class="legend-chip"><span class="legend-swatch swatch-city"></span>City, sized by sales</span>
+          </p>
+        </section>
+
+        <section class="card compare-card" aria-labelledby="compare-h">
+          <header class="panel-head">
+            <h2 id="compare-h">Side by side</h2>
+            <p>Compare two cities or two campus areas.</p>
+          </header>
+          <div class="compare-controls">
+            <label class="field" for="compare-kind">
+              Compare
+              <select id="compare-kind">
+                <option value="city">Cities</option>
+                <option value="campus">Campus areas</option>
+              </select>
+            </label>
+            <label class="field" for="compare-a">
+              First
+              <select id="compare-a"></select>
+            </label>
+            <label class="field" for="compare-b">
+              Second
+              <select id="compare-b"></select>
+            </label>
+          </div>
+          <div id="compare-body" class="compare-body"></div>
+        </section>
+      </div>
+
+      <section class="card" aria-labelledby="table-h">
+        <header class="panel-head">
+          <h2 id="table-h">Results by city</h2>
+          <p>Click a column heading to sort. Numbers reflect the filters above.</p>
+        </header>
+        <div id="results-table"></div>
+      </section>
+
+      <section class="card" aria-labelledby="dist-h">
+        <header class="panel-head">
+          <h2 id="dist-h">Where prices sit</h2>
+          <p>Distribution of matched sale prices; the marked value is the median.</p>
+        </header>
+        <div class="chart chart-short" id="dist-chart"></div>
+      </section>
+
+      <section class="card" id="explorer-insights" aria-labelledby="ei-h">
+        <header class="panel-head">
+          <h2 id="ei-h">What the rankings leave out</h2>
+          <p>Three things a median price per town does not show.</p>
+        </header>
+        <article class="insight">
+          <h3>Distance is a constraint, not a discount</h3>
+          <p id="insight-proximity"></p>
+        </article>
+        <article class="insight">
+          <h3>The annual tax bill outlasts the price</h3>
+          <p id="insight-tax"></p>
+        </article>
+        <article class="insight">
+          <h3>Listed to closed is not days on market</h3>
+          <p id="insight-timing"></p>
+        </article>
+      </section>
+
+      <p class="explorer-note">
+        Prices are limited to $10,000 to $5,000,000, the project's price scope. Missing values are never
+        treated as zero: the range filters skip sales with no recorded value, and the home-feature
+        filters offer Unknown as its own choice. See <a href="index.html#data-methods">Data and methods</a>.
+      </p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <p>Built from the college-town home sales dataset with OpenCode and DeepSeek V4.1 Flash.</p>
+      <p><a href="index.html">Read the analysis</a> &middot; <a href="https://github.com/bsalbilla06/college-town-home-sales">Code on GitHub</a></p>
+    </div>
+  </footer>
+
+  
+  <script src="insights.js?v=3"></script>
+  <script src="charts.js?v=3"></script>
+  <script src="analysis.js?v=3"></script>
+  <script src="theme.js?v=3"></script>
+  <script src="explore.js?v=3"></script>
+</body>
+</html>

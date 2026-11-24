@@ -43,3 +43,73 @@ Copy this outline for each entry:
     the true medians (e.g. Urbana: $229,900 and 1,550 sq ft), which match the table.
   - Also had the agent state on the page how many dots fall outside the chart range, rather than
     silently dropping them.
+
+---
+
+## 2026-11-22: Part 2, the graded questions and the explorer
+
+- **Asked:** "Ok now onto part 2: https://canvas.illinois.edu/courses/74173/assignments/1805936. DO NOT SUBMIT"
+  Then, when offered a choice of scope: build the full 140-point version — ten answered questions with
+  charts, two written insights, all ten required features, and several design rounds — in the existing
+  repository.
+- **Agent produced:** A pandas answer key (`scripts/answer_key.py`), a row-level extract and a
+  browser statistics module (`analysis.js`), a new chart toolkit (`charts.js`), the analysis page
+  (`index.html` + `ui.js`), the explorer (`explore.html` + `explore.js`), a theme toggle, three
+  explorer insights (`insights.js`), a Node check script (`scripts/check_analysis.js`), and this
+  rewrite of the README.
+- **Checked or changed:** Every answer was compared with pandas. The failures below are the ones I
+  caught while reviewing, and each is reproduced in the commit history.
+
+### Mistakes the agent made, and how they were caught
+
+1. **The price scope was wrong for Q2.** The first version applied the $10,000 to $5,000,000 rule to
+   Q2, which the assignment says to answer on all rows. Caught by re-reading the question against the
+   assignment's rules list. A second bug hid behind it: the "winner" field was never filled in for Q2.
+2. **Q3 reported changes that did not happen.** The agent described cities moving rank in the wrong
+   order. Caught by comparing its sentence against the table the same run had drawn. The ranking
+   itself was right; only the narrative was wrong.
+3. **Days on market kept negative gaps.** The code accepted rows where the contract date came before
+   the listing date. Caught by the pandas comparison, which used the same filter and disagreed on 73
+   rows.
+4. **Chart labels were drawn inside the margin.** Horizontal bar charts put their bars at the edge of
+   the SVG, so every city name was clipped. Caught by taking screenshots of the rendered page rather
+   than trusting that the chart had drawn.
+5. **A chart short-circuit hid the first paint.** A "not ready" guard I had added for a slow
+   stylesheet made five charts draw once with no labels and never again. Caught by reading the
+   rendered SVG, finding bars at x=0, and tracing which code path could produce them.
+6. **One label per chart was cut off at the right edge**, and on a phone-length chart the value
+   labels sat on top of each other. Caught by resizing to 390 px and looking at every chart again.
+7. **The explorer crashed silently.** `Charts.bindTip` was never exported, so the map threw and the
+   map, comparison, table and chart below it never drew. Caught only because the page was empty past
+   the filters; the console then named the missing function.
+8. **Nine wording or number slips in prose**, including "Illinois posts an 11-day median" when its
+   median is 7 days, "55%" written as "5%", and a claim that Athens would stop being the slowest
+   market, which is false because blank-as-zero also depresses every other slow market. Caught by
+   printing the computed values beside each sentence and reading them one by one.
+
+### What worked well
+
+- Asking for a reference implementation in pandas before touching the page. Running
+  `node scripts/check_analysis.js` takes a second and compared 37 numbers between the two code paths;
+  it caught the negative-day-count bug and a stale cache of an older data file.
+- Working in small rounds: get the answers right, then the controls, then the responsive layout, then
+  the design passes, with a screenshot after each.
+- Letting the agent write the insights prose but checking every figure in it against the table on
+  the same page.
+
+### Things I would do differently
+
+- Take a screenshot of every chart on every change, not just the one I was editing; several layout
+  bugs survived because I only re-checked the chart I had last touched.
+- Ask the agent to build charts through one shared frame function from the start. The label-column bug
+  existed in four separate chart types because each had its own copy of the same drawing code.
+9. **The price filter still clipped a two-digit number.** I tried a dollar-sign
+   chip inside the field and a "Min/Max" tag beside it; both models were
+   sound, but the changes never reached the browser. The dev server kept
+   serving an old copy of `styles.css` under the same address, while my
+   reads of the page kept reporting the old layout, so I spent many rounds
+   editing CSS that the page had never loaded. Caught by measuring the
+   stylesheet's rule count in the browser against the file on disk, and
+   then by appending a "no-cache" query to the link. Fixed by dropping the
+   chip and putting "$" in the field label, which is simpler and also
+   correct.

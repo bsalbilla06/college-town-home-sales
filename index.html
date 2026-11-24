@@ -1,175 +1,422 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>College-Town Home Sales Explorer</title>
-  <meta name="description" content="Explore 35,371 home sales near 11 college campuses: median price, price per square foot, days on market, and distance to campus.">
-  <link rel="icon" href="data:,">
-  <link rel="stylesheet" href="styles.css">
+  <title>College-Town Home Sales: Analysis and Explorer</title>
+  <meta name="description" content="Ten answered questions about 35,442 home sales near 11 college campuses, with an interactive explorer, filters, map and charts.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f6b5c'/%3E%3Cpath d='M8 17 16 9l8 8v7H8z' fill='%23f2c14e'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+  <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
-  <a class="skip" href="#main">Skip to content</a>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <div id="loading" class="loading" role="status" aria-live="polite">
+    <div class="loading-box">
+      <span class="spinner" aria-hidden="true"></span>
+      <p>Loading 35,442 home sales&hellip;</p>
+    </div>
+  </div>
 
   <header class="site-header">
-    <div class="wrap">
-      <p class="eyebrow">College-town home sales, 2023&ndash;2026</p>
-      <h1>What a house costs near campus</h1>
-      <p class="lede">
-        An explorer for <strong id="n-sales">&hellip;</strong> recorded home sales around
-        <strong id="n-campuses">&hellip;</strong> university campuses in
-        <strong id="n-cities">&hellip;</strong> college towns. Compare towns by price, price per
-        square foot, how long homes sit on the market, and how close they are to campus.
-      </p>
-      <p class="meta-line">
-        Sale dates <span id="date-range">&hellip;</span>. Data collected March 2026.
-      </p>
+    <div class="wrap header-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-text">College-Town<small>Home Sales</small></span>
+      </a>
+      <nav class="site-nav" aria-label="Primary">
+        <a href="index.html" aria-current="page">Analysis</a>
+        <a href="explore.html">Explorer</a>
+        <a href="#data-methods">Data and methods</a>
+      </nav>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false" aria-label="Switch to dark mode">
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.6M12 18.9v2.6M2.5 12h2.6M18.9 12h2.6M5.2 5.2l1.9 1.9M16.9 16.9l1.9 1.9M18.8 5.2l-1.9 1.9M7.1 16.9l-1.9 1.9"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.2A8.4 8.4 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2z"/></svg>
+      </button>
     </div>
   </header>
 
-  <main id="main" class="wrap">
-
-    <section class="cards" aria-label="Headline figures">
-      <article class="card">
-        <h2>Median sale price</h2>
-        <p class="figure" id="kpi-median-price">&hellip;</p>
-        <p class="caption">Across all kept sales</p>
-      </article>
-      <article class="card">
-        <h2>Median price per sq ft</h2>
-        <p class="figure" id="kpi-ppsf">&hellip;</p>
-        <p class="caption">Homes with a recorded living area</p>
-      </article>
-      <article class="card">
-        <h2>Median days on market</h2>
-        <p class="figure" id="kpi-dom">&hellip;</p>
-        <p class="caption">Listing to accepted offer</p>
-      </article>
-      <article class="card">
-        <h2>Sales within 3 miles</h2>
-        <p class="figure" id="kpi-near">&hellip;</p>
-        <p class="caption">Of all kept sales</p>
-      </article>
+  <main id="main">
+    <section class="hero">
+      <div class="wrap">
+        <p class="eyebrow">Business analysis of price, pace and tax near campus</p>
+        <h1>What does a home cost near campus, and how fast does it sell?</h1>
+        <p class="hero-lede">
+          Every figure below is computed in your browser from 35,442 recorded home sales within
+          15 miles of 11 university campuses, collected March 2026. Questions one to six use the
+          whole dataset; questions seven to ten answer for settings you choose.
+        </p>
+        <dl class="stat-strip" id="stat-strip">
+          <div><dt>Sales in the file</dt><dd id="stat-sales">&mdash;</dd></div>
+          <div><dt>Cities</dt><dd id="stat-cities">&mdash;</dd></div>
+          <div><dt>Campus areas</dt><dd id="stat-campuses">&mdash;</dd></div>
+          <div><dt>Sale dates</dt><dd id="stat-dates">&mdash;</dd></div>
+        </dl>
+      </div>
     </section>
 
-    <section class="panel" id="city-section">
-      <div class="panel-head">
-        <h2>City comparison</h2>
-        <p>Click a column heading to sort. Click a row to highlight that town in the chart below.</p>
-      </div>
-      <div class="table-scroll">
-        <table id="city-table">
-          <thead>
-            <tr>
-              <th scope="col" data-sort="city" class="text">City</th>
-              <th scope="col" data-sort="university" class="text">Nearest campus</th>
-              <th scope="col" data-sort="sales" class="num" aria-sort="none">Sales</th>
-              <th scope="col" data-sort="median_price" class="num" aria-sort="descending">Median price</th>
-              <th scope="col" data-sort="median_ppsf" class="num" aria-sort="none">Median $/sq ft</th>
-              <th scope="col" data-sort="median_sqft" class="num" aria-sort="none">Median sq ft</th>
-              <th scope="col" data-sort="median_dom" class="num" aria-sort="none">Median days on market</th>
-              <th scope="col" data-sort="median_miles" class="num" aria-sort="none">Median miles to campus</th>
-              <th scope="col" data-sort="share_under_3_mi" class="num" aria-sort="none">Within 3 mi</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <p class="footnote">
-        Days on market uses only sales with both a listing and a contract date
-        (<span id="dom-coverage">&hellip;</span> of kept sales). A blank date is not counted as zero days.
-      </p>
-    </section>
+    <div class="wrap layout">
+      <aside class="toc" aria-label="On this page">
+        <p class="toc-title">On this page</p>
+        <ol>
+          <li><a href="#q1">Q1 Highest median price</a></li>
+          <li><a href="#q2">Q2 Mean above median</a></li>
+          <li><a href="#q3">Q3 Rank shifts</a></li>
+          <li><a href="#q4">Q4 Price change, 2024&ndash;25</a></li>
+          <li><a href="#q5">Q5 Days on market</a></li>
+          <li><a href="#q6">Q6 Tax burden</a></li>
+          <li><a href="#q7">Q7 Cheapest for bedrooms</a></li>
+          <li><a href="#q8">Q8 Fastest at a price</a></li>
+          <li><a href="#q9">Q9 Sales by month</a></li>
+          <li><a href="#q10">Q10 Reach at a budget</a></li>
+          <li><a href="#insights">Insights</a></li>
+          <li><a href="#data-methods">Data and methods</a></li>
+        </ol>
+      </aside>
 
-    <section class="panel" id="scatter-section">
-      <div class="panel-head">
-        <h2>Every sale, one dot</h2>
-        <p>Living area against sale price. Use the controls to filter by campus and town.</p>
-      </div>
-      <form class="controls" id="scatter-controls">
-        <label>
-          Campus
-          <select id="filter-campus">
-            <option value="">All campuses</option>
-          </select>
-        </label>
-        <label>
-          Town
-          <select id="filter-city">
-            <option value="">All towns</option>
-          </select>
-        </label>
-      </form>
-      <div class="chart-holder">
-        <canvas id="scatter" role="img" aria-label="Scatter plot of living area against sale price"></canvas>
-      </div>
-      <p class="footnote" id="scatter-note">&hellip;</p>
-    </section>
+      <div class="content">
 
-    <section class="panel">
-      <div class="panel-head">
-        <h2>Median price by year of sale</h2>
-        <p>All kept sales, grouped by the calendar year the sale closed.</p>
-      </div>
-      <div class="chart-holder short">
-        <canvas id="trend" role="img" aria-label="Bar chart of median sale price by year"></canvas>
-      </div>
-      <p class="footnote">
-        2026 covers only January through March, so treat that bar as a partial year.
-      </p>
-    </section>
+        <!-- ============================ Q1 ============================ -->
+        <section class="card q" id="q1" aria-labelledby="q1-h">
+          <header class="q-head">
+            <p class="q-tag">Q1</p>
+            <h2 id="q1-h">Which city has the highest median sale price?</h2>
+          </header>
+          <p class="answer" id="q1-answer">Computing&hellip;</p>
+          <figure class="chart-figure">
+            <figcaption>
+              <span class="fig-title">Median sale price by city</span>
+              <span class="fig-sub">18 cities, sales of $10,000 to $5,000,000</span>
+            </figcaption>
+            <div class="chart" id="q1-chart"></div>
+          </figure>
+          <details class="table-drawer">
+            <summary>Show every city's median price as a table</summary>
+            <div id="q1-table"></div>
+          </details>
+        </section>
 
-    <section class="panel" id="notes">
-      <div class="panel-head">
-        <h2>How these numbers were made</h2>
+        <!-- ============================ Q2 ============================ -->
+        <section class="card q" id="q2" aria-labelledby="q2-h">
+          <header class="q-head">
+            <p class="q-tag">Q2</p>
+            <h2 id="q2-h">Which city's mean sale price is furthest above its median, as a percent of the median?</h2>
+          </header>
+          <p class="answer" id="q2-answer">Computing&hellip;</p>
+  <p class="q-note">
+    Removing the four Athens sales above $5 million leaves its median unchanged at $370,000 while its mean
+    drops to $455,639, so the same gap shrinks from 32.80% to 23.15%. Q3 ranks every city under that rule.
+  </p>
+          <figure class="chart-figure">
+            <figcaption>
+              <span class="fig-title">Mean above median, as a share of the median</span>
+              <span class="fig-sub">All 35,442 rows, no price rule</span>
+            </figcaption>
+            <div class="chart" id="q2-chart"></div>
+          </figure>
+          <details class="table-drawer">
+            <summary>Show mean and median for every city</summary>
+            <div id="q2-table"></div>
+          </details>
+        </section>
+
+        <!-- ============================ Q3 ============================ -->
+        <section class="card q" id="q3" aria-labelledby="q3-h">
+          <header class="q-head">
+            <p class="q-tag">Q3</p>
+            <h2 id="q3-h">Which cities change rank when expensive sales are removed?</h2>
+          </header>
+          <p class="answer" id="q3-answer">Computing&hellip;</p>
+          <figure class="chart-figure">
+            <figcaption>
+              <span class="fig-title">Mean sale price rank: all rows against sales of $10,000 to $5,000,000</span>
+              <span class="fig-sub">Rank 1 is the highest mean. Each line runs from the all-rows rank (left) to the rank on sales of $10,000 to $5,000,000 (right).</span>
+            </figcaption>
+            <div class="chart chart-tall" id="q3-chart"></div>
+          </figure>
+          <details class="table-drawer">
+            <summary>Show both rankings as a table</summary>
+            <div id="q3-table"></div>
+          </details>
+        </section>
+
+        <!-- ============================ Q4 ============================ -->
+        <section class="card q" id="q4" aria-labelledby="q4-h">
+          <header class="q-head">
+            <p class="q-tag">Q4</p>
+            <h2 id="q4-h">How much did the median sale price change from 2024 to 2025 in each campus area?</h2>
+          </header>
+          <p class="answer" id="q4-answer">Computing&hellip;</p>
+          <figure class="chart-figure">
+            <figcaption>
+              <span class="fig-title">Percent change in median sale price, 2024 to 2025</span>
+              <span class="fig-sub">11 campus areas, sales of $10,000 to $5,000,000</span>
+            </figcaption>
+            <div class="chart" id="q4-chart"></div>
+          </figure>
+          <details class="table-drawer">
+            <summary>Show the 2024 and 2025 medians</summary>
+            <div id="q4-table"></div>
+          </details>
+        </section>
+
+        <!-- ============================ Q5 ============================ -->
+        <section class="card q" id="q5" aria-labelledby="q5-h">
+          <header class="q-head">
+            <p class="q-tag">Q5</p>
+            <h2 id="q5-h">How long does a home take to go under contract in each campus area?</h2>
+          </header>
+          <p class="answer" id="q5-answer">Computing&hellip;</p>
+          <figure class="chart-figure">
+            <figcaption>
+              <span class="fig-title">Median days on market by campus area</span>
+              <span class="fig-sub">Listing to accepted offer. Dot plot with quartile ranges.</span>
+            </figcaption>
+            <div class="chart" id="q5-chart"></div>
+          </figure>
+          <details class="table-drawer">
+            <summary>Show days on market and coverage by campus area</summary>
+            <div id="q5-table"></div>
+          </details>
+        </section>
+
+        <!-- ============================ Q6 ============================ -->
+        <section class="card q" id="q6" aria-labelledby="q6-h">
+          <header class="q-head">
+            <p class="q-tag">Q6</p>
+            <h2 id="q6-h">How heavy is the property tax burden in each campus area?</h2>
+          </header>
+          <p class="answer" id="q6-answer">Computing&hellip;</p>
+          <figure class="chart-figure">
+            <figcaption>
+              <span class="fig-title">Total annual property tax as a percent of total sale price</span>
+              <span class="fig-sub">Summed tax over summed price, 11 campus areas</span>
+            </figcaption>
+            <div class="chart" id="q6-chart"></div>
+          </figure>
+          <details class="table-drawer">
+            <summary>Show the tax and price totals</summary>
+            <div id="q6-table"></div>
+          </details>
+        </section>
+
+        <!-- ============================ Q7 ============================ -->
+        <section class="card q interactive" id="q7" aria-labelledby="q7-h">
+          <header class="q-head">
+            <p class="q-tag">Q7</p>
+            <h2 id="q7-h">For an exact number of bedrooms, which city has the lowest median sale price?</h2>
+          </header>
+          <div class="control-row">
+            <label class="field" for="q7-beds">
+              Bedrooms (exactly)
+              <select id="q7-beds"></select>
+            </label>
+          </div>
+          <p class="answer" id="q7-answer">Computing&hellip;</p>
+          <figure class="chart-figure">
+            <figcaption>
+              <span class="fig-title">Median sale price by city for the selected bedroom count</span>
+              <span class="fig-sub">Cities with no sales of that size are left out</span>
+            </figcaption>
+            <div class="chart" id="q7-chart"></div>
+          </figure>
+          <details class="table-drawer">
+            <summary>Show every city's median and sale count</summary>
+            <div id="q7-table"></div>
+          </details>
+        </section>
+
+        <!-- ============================ Q8 ============================ -->
+        <section class="card q interactive" id="q8" aria-labelledby="q8-h">
+          <header class="q-head">
+            <p class="q-tag">Q8</p>
+            <h2 id="q8-h">Within a price range, which city's homes go under contract fastest?</h2>
+          </header>
+          <div class="control-row">
+            <label class="field" for="q8-min">
+              Minimum price
+              <input type="number" id="q8-min" min="10000" max="5000000" step="1000" value="200000" inputmode="numeric">
+            </label>
+            <label class="field" for="q8-max">
+              Maximum price
+              <input type="number" id="q8-max" min="10000" max="5000000" step="1000" value="400000" inputmode="numeric">
+            </label>
+          </div>
+          <p class="answer" id="q8-answer">Computing&hellip;</p>
+          <figure class="chart-figure">
+            <figcaption>
+              <span class="fig-title">Median days on market by city within the chosen price range</span>
+              <span class="fig-sub">Only sales with both a listing and a contract date count</span>
+            </figcaption>
+            <div class="chart" id="q8-chart"></div>
+          </figure>
+          <details class="table-drawer">
+            <summary>Show every city's median days on market and sale count</summary>
+            <div id="q8-table"></div>
+          </details>
+        </section>
+
+        <!-- ============================ Q9 ============================ -->
+        <section class="card q interactive" id="q9" aria-labelledby="q9-h">
+          <header class="q-head">
+            <p class="q-tag">Q9</p>
+            <h2 id="q9-h">In a chosen city and year, which month had the most sales?</h2>
+          </header>
+          <div class="control-row">
+            <label class="field" for="q9-city">
+              City
+              <select id="q9-city"></select>
+            </label>
+            <label class="field" for="q9-year">
+              Year
+              <select id="q9-year"></select>
+            </label>
+          </div>
+          <p class="answer" id="q9-answer">Computing&hellip;</p>
+          <figure class="chart-figure">
+            <figcaption>
+              <span class="fig-title">Recorded sales by month of closing</span>
+              <span class="fig-sub">All rows with a sale date, no price rule</span>
+            </figcaption>
+            <div class="chart" id="q9-chart"></div>
+          </figure>
+          <details class="table-drawer">
+            <summary>Show the monthly counts</summary>
+            <div id="q9-table"></div>
+          </details>
+        </section>
+
+        <!-- ============================ Q10 =========================== -->
+        <section class="card q interactive" id="q10" aria-labelledby="q10-h">
+          <header class="q-head">
+            <p class="q-tag">Q10</p>
+            <h2 id="q10-h">With a budget and a bedroom floor, how close can a buyer get to campus?</h2>
+          </header>
+          <div class="control-row">
+            <label class="field" for="q10-campus">
+              Campus area
+              <select id="q10-campus"></select>
+            </label>
+            <label class="field" for="q10-budget">
+              Maximum budget
+              <input type="number" id="q10-budget" min="10000" max="5000000" step="5000" value="400000" inputmode="numeric">
+            </label>
+            <label class="field" for="q10-beds">
+              Minimum bedrooms
+              <input type="number" id="q10-beds" min="0" max="10" step="1" value="3" inputmode="numeric">
+            </label>
+          </div>
+          <p class="answer" id="q10-answer">Computing&hellip;</p>
+          <figure class="chart-figure">
+            <figcaption>
+              <span class="fig-title">Distance to campus for matching sales</span>
+              <span class="fig-sub">Histogram of straight-line miles, with the median marked</span>
+            </figcaption>
+            <div class="chart" id="q10-chart"></div>
+          </figure>
+        </section>
+
+        <!-- ========================== Insights ======================== -->
+        <section class="card" id="insights" aria-labelledby="insights-h">
+          <header class="q-head">
+            <p class="q-tag alt">Insights</p>
+            <h2 id="insights-h">What the work turned up</h2>
+          </header>
+
+          <article class="insight" id="insight-p1">
+            <h3>P1. A blank listing date is not zero days on market</h3>
+            <p id="p1-body">Computing&hellip;</p>
+            <figure class="chart-figure">
+              <figcaption>
+                <span class="fig-title">The same median, computed two ways</span>
+                <span class="fig-sub">Treating a blank list date as instant sale against leaving it out</span>
+              </figcaption>
+              <div class="chart" id="p1-chart"></div>
+            </figure>
+            <div id="p1-table"></div>
+          </article>
+
+          <article class="insight" id="insight-p2">
+            <h3>P2. Working with a coding agent instead of a notebook</h3>
+            <p id="p2-body">Computing&hellip;</p>
+          </article>
+        </section>
+
+        <!-- ======================= Data and methods ==================== -->
+        <section class="card" id="data-methods" aria-labelledby="dm-h">
+          <header class="q-head">
+            <p class="q-tag alt">Reference</p>
+            <h2 id="dm-h">Data and methods</h2>
+          </header>
+
+          <h3>Rules applied here</h3>
+          <dl class="rules">
+            <dt>Price scope</dt>
+            <dd>Questions 1 and 4 to 8 and 10 use sales with a <code>sale_price</code> from
+              <strong>$10,000 to $5,000,000</strong> inclusive. That is 35,371 of 35,442 rows. It removes
+              40 sales under $10,000, including one at $0, and 31 above $5,000,000, up to
+              $81,510,000. Questions 2, 3 and 9 also use all rows, as the assignment asks.</dd>
+            <dt>Campus area and city</dt>
+            <dd>A campus area is the dataset's <code>university</code> column, 11 values. A city is city
+              and state together, 18 values, such as <em>Champaign, IL</em>.</dd>
+            <dt>Days on market</dt>
+            <dd><code>contract_date</code> minus <code>list_date</code>, in days, the listing-to-accepted-offer
+              measure real estate sites use. Only sales with both dates count; a blank date is never
+              read as zero. That leaves 79.2% of sales.</dd>
+            <dt>Missing values</dt>
+            <dd>A missing value is left out of the statistic, never filled with zero. Filters that
+              ask about garage, basement or fireplace offer <em>Unknown</em> as its own choice, and
+              the range filters exclude sales with no recorded value.</dd>
+            <dt>Medians, not means</dt>
+            <dd>Every question uses the median unless it asks for the mean, so a handful of unusual
+              properties cannot move the answer.</dd>
+            <dt>No de-duplication by address</dt>
+            <dd>66 rows share a street address, mostly condo units in one State College building. Each
+              is a separate sale with its own <code>listing_id</code>, and all are kept.</dd>
+            <dt>Chart types</dt>
+            <dd>This page uses horizontal bar (Q1, Q4, Q6, Q7, Q8), diverging bar (Q2), slope (Q3),
+              dot plot with quartile ranges (Q5), monthly column (Q9) and histogram (Q10), plus a
+              grouped bar in the insights.</dd>
+          </dl>
+
+          <h3>Where the numbers come from</h3>
+          <p class="method-text">
+            The site ships one row-level extract, <code>data/derived/site_data.json</code>, made
+            from the dataset by <code>scripts/build_site_data.py</code>. Every figure on this page is
+            computed in your browser from those rows, so a setting you choose is answered from the
+            full data rather than from a precomputed number. A separate script,
+            <code>scripts/answer_key.py</code>, recomputes the graded answers with pandas so they can
+            be checked against the site.
+          </p>
+          <p class="method-text">
+            Values are as reported by the collection source and were not verified against county
+            records. Treat them as a copy of what one source said in March 2026.
+          </p>
+          <p class="citation">
+            <strong>Citation.</strong> College-town home sales dataset, version 1.0 (2026). University of
+            Illinois-Deloitte Foundation Center for Business Emerging Technologies. Data collected
+            March 2026.
+          </p>
+        </section>
+
       </div>
-      <ul class="rules">
-        <li>
-          <strong>Implausible prices are dropped.</strong> We keep sales from
-          <span id="rule-min">&hellip;</span> to <span id="rule-max">&hellip;</span>.
-          That removes <span id="rule-low">&hellip;</span> sales under the floor (including one at $0)
-          and <span id="rule-high">&hellip;</span> above the ceiling (up to $81.5 million), for
-          <span id="rule-kept">&hellip;</span> of <span id="rule-total">&hellip;</span> rows.
-        </li>
-        <li>
-          <strong>Price per square foot</strong> uses only homes with a living area above zero;
-          127 rows report zero square feet and cannot be divided.
-        </li>
-        <li>
-          <strong>Days on market</strong> is the gap from listing to accepted offer, not to closing.
-          Closing adds roughly a month. We do not treat a missing date as zero days.
-        </li>
-        <li>
-          <strong>No de-duplication by address.</strong> 66 rows share a street address, mostly condo
-          units in one State College building. Each is a separate sale with its own listing id.
-        </li>
-        <li>
-          <strong>Home type is ignored.</strong> The source labels nearly every row "single family",
-          including condo units, so we do not filter or group by it.
-        </li>
-        <li>
-          <strong>Medians, not means.</strong> A handful of very large or unusual properties would
-          pull averages upward, so every headline figure here is a median.
-        </li>
-      </ul>
-      <p class="footnote">
-        Figures are recomputed from the raw CSV by
-        <code>scripts/build_site_data.py</code>, which writes <code>data/derived/site_data.json</code>.
-        The five original dataset files in <code>data/</code> are unchanged.
-      </p>
-    </section>
+    </div>
   </main>
 
   <footer class="site-footer">
-    <div class="wrap">
-      <p>
-        College-town home sales dataset, version 1.0 (2026). University of Illinois-Deloitte
-        Foundation Center for Business Emerging Technologies. Data collected March 2026.
-      </p>
-      <p><a href="https://github.com/bsalbilla06/college-town-home-sales">Source and code on GitHub</a></p>
+    <div class="wrap footer-inner">
+      <p>Built from the college-town home sales dataset with OpenCode and DeepSeek V4.1 Flash.</p>
+      <p><a href="explore.html">Open the explorer</a> &middot; <a href="https://github.com/bsalbilla06/college-town-home-sales">Code on GitHub</a></p>
     </div>
   </footer>
 
-  <script src="app.js"></script>
+  <script src="p2.js?v=3"></script>
+  <script src="charts.js?v=3"></script>
+  <script src="analysis.js?v=3"></script>
+  <script src="theme.js?v=3"></script>
+  <script src="ui.js?v=3"></script>
 </body>
 </html>

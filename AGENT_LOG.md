@@ -103,3 +103,13 @@ Copy this outline for each entry:
   bugs survived because I only re-checked the chart I had last touched.
 - Ask the agent to build charts through one shared frame function from the start. The label-column bug
   existed in four separate chart types because each had its own copy of the same drawing code.
+9. **The price filter still clipped a two-digit number.** I tried a dollar-sign
+   chip inside the field and a "Min/Max" tag beside it; both models were
+   sound, but the changes never reached the browser. The dev server kept
+   serving an old copy of `styles.css` under the same address, while my
+   reads of the page kept reporting the old layout, so I spent many rounds
+   editing CSS that the page had never loaded. Caught by measuring the
+   stylesheet's rule count in the browser against the file on disk, and
+   then by appending a "no-cache" query to the link. Fixed by dropping the
+   chip and putting "$" in the field label, which is simpler and also
+   correct.

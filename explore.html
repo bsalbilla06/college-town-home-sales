@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
-  <link rel="stylesheet" href="styles.css?v=3">
+  <link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -77,14 +77,12 @@
             <select id="f-year"></select>
           </label>
 
-          <div class="field">
+          <div class="field wide">
             <span class="field-label" id="beds-label">Bedrooms</span>
             <div class="field-inline">
-              <label class="sr-only" for="f-beds-min">Minimum bedrooms</label>
-              <input type="number" id="f-beds-min" min="0" max="10" step="1" value="0" inputmode="numeric">
+              <label>Min <input type="number" id="f-beds-min" min="0" max="10" step="1" value="0" inputmode="numeric" aria-label="Minimum bedrooms"></label>
               <span class="range-dash" aria-hidden="true">to</span>
-              <label class="sr-only" for="f-beds-max">Maximum bedrooms</label>
-              <input type="number" id="f-beds-max" min="0" max="10" step="1" value="10" inputmode="numeric">
+              <label>Max <input type="number" id="f-beds-max" min="0" max="10" step="1" value="10" inputmode="numeric" aria-label="Maximum bedrooms"></label>
             </div>
           </div>
 
@@ -94,13 +92,13 @@
               <div class="range-slider" id="price-slider"></div>
               <div class="range-inputs">
                 <label>
-                  Min
-                  <span class="unit-input"><span class="unit" aria-hidden="true">$</span><input type="number" id="f-price-min" min="10000" max="5000000" step="1000" value="10000" inputmode="numeric"></span>
+                  Min price ($)
+                  <input type="number" id="f-price-min" min="10000" max="5000000" step="1000" value="10000" inputmode="numeric">
                 </label>
                 <span class="range-dash" aria-hidden="true">to</span>
                 <label>
-                  Max
-                  <span class="unit-input"><span class="unit" aria-hidden="true">$</span><input type="number" id="f-price-max" min="10000" max="5000000" step="1000" value="5000000" inputmode="numeric"></span>
+                  Max price ($)
+                  <input type="number" id="f-price-max" min="10000" max="5000000" step="1000" value="5000000" inputmode="numeric">
                 </label>
               </div>
             </div>

@@ -306,20 +306,17 @@ input[type="number"] { appearance: textfield; -moz-appearance: textfield; font-v
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
-/* number plus its unit, so the two cannot drift apart */
-.field .unit-input { display: flex; align-items: stretch; }
-.field .unit-input input { flex: 1; min-width: 0; }
-.field .unit-input .unit {
-  display: flex; align-items: center; padding: 0 0.5rem; font-size: 0.85rem; font-weight: 600;
-  color: var(--ink-3); background: var(--surface-2); border: 1px solid var(--line-strong);
-  border-right: none; border-radius: var(--radius-sm) 0 0 var(--radius-sm); white-space: nowrap;
-}
-.field .unit-input input { border-top-left-radius: 0; border-bottom-left-radius: 0; }
+/* paired number fields share the space instead of forcing a minimum width */
+.field-inline { display: flex; align-items: center; gap: 0.4rem; }
+.filter-grid .field-inline { gap: 0.55rem; }
+.filter-grid .field-inline label { display: flex; align-items: center; gap: 0.4rem; flex: 1 1 0; min-width: 0; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); }
+.filter-grid .field-inline input { min-width: 0; width: 100%; flex: 1 1 0; padding-left: 0.45rem; padding-right: 0.45rem; }
+.filter-grid .field-inline .range-dash { flex: none; }
 
 select, input[type="number"], input[type="text"], input[type="search"] {
   font-family: var(--font-sans); font-size: 0.92rem; color: var(--ink);
   background: var(--surface); border: 1px solid var(--line-strong); border-radius: var(--radius-sm);
-  padding: 0.5rem 0.65rem; min-height: 2.4rem; min-width: 9rem;
+  padding: 0.5rem 0.65rem; min-height: 2.4rem; min-width: 0;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 select { appearance: none; padding-right: 2rem; cursor: pointer;
@@ -418,8 +415,11 @@ select:focus-visible, input:focus-visible { border-color: var(--accent); box-sha
 
 .range-wrap { display: flex; flex-direction: column; gap: 0.55rem; }
 .range-inputs { display: flex; align-items: flex-end; gap: 0.5rem; flex-wrap: wrap; }
-.range-inputs label { display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); }
-.range-inputs input { min-width: 7.5rem; padding: 0.35rem 0.5rem; min-height: 2.1rem; }
+.range-inputs label { display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-3); flex: 1 1 0%; min-width: 0; }
+.filter-grid .field > .range-wrap > .range-inputs > label { flex-direction: column; align-items: stretch; }
+.range-inputs input { padding: 0.35rem 0.45rem; min-height: 2.1rem; }
+/* Wide enough for $5,000,000 once the dollar sign sits inside the field. */
+
 
 /* dual-handle slider drawn from two stacked range inputs */
 .range-slider { position: relative; height: 2rem; }
@@ -459,10 +459,11 @@ select:focus-visible, input:focus-visible { border-color: var(--accent); box-sha
 .filters-actions { display: flex; gap: 0.5rem; }
 
 .filter-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
   gap: 1rem 1.1rem;
 }
 .filter-grid .wide { grid-column: span 2; }
+.filter-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); }
 .filter-grid .field { min-width: 0; }
 .filter-grid input, .filter-grid select { width: 100%; }
 

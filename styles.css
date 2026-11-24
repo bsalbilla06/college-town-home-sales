@@ -227,11 +227,12 @@ code { font-size: 0.88em; background: var(--surface-2); padding: 0.08em 0.35em; 
 .chart .axis-label { fill: var(--ink-2); font-family: var(--font-sans); font-size: 11.5px; font-weight: 600; letter-spacing: 0.02em; }
 .chart .value-label { fill: var(--ink); font-family: var(--font-sans); font-size: 11.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .chart .value-label.is-inside { fill: var(--paper); }
-.chart .bar.is-answer + .value-label.is-inside { fill: var(--accent-ink); }
+.chart .bar.is-answer + .value-label.is-inside { fill: var(--paper); }
 .chart .cat-label { fill: var(--ink-2); font-family: var(--font-sans); font-size: 12px; }
 .chart .cat-label.is-answer { fill: var(--ink); font-weight: 700; }
 .chart .bar { fill: var(--muted-2); transition: fill 0.12s; }
 .chart .bar.is-answer { fill: var(--accent); }
+.chart .answer-row { fill: var(--accent-soft); opacity: 0.55; }
 .chart .bar.is-negative { fill: var(--neg-soft); }
 .chart .bar.is-negative.is-answer { fill: var(--neg); }
 .chart .bar-hit:hover + .bar, .chart .bar:hover { filter: brightness(0.94); }
@@ -570,4 +571,24 @@ select:focus-visible, input:focus-visible { border-color: var(--accent); box-sha
   .range-inputs input { min-width: 0; width: 100%; }
   .range-inputs label { flex: 1; }
   .table-scroll { -webkit-overflow-scrolling: touch; }
+}
+
+/* Narrow screens: the filters and the comparison stay inside the viewport. */
+@media (max-width: 30rem) {
+  .filter-grid { grid-template-columns: minmax(0, 1fr); }
+  .range-inputs { flex-wrap: wrap; }
+  .range-inputs label { flex: 1 1 6rem; }
+  .compare-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr) minmax(0, 0.9fr); }
+  .compare-head > *, .compare-row > * { padding: 0.4rem 0.35rem; font-size: 0.72rem; }
+  .compare-metric { font-size: 0.72rem; line-height: 1.25; }
+  .compare-metric small { display: none; }
+  .big .compare-val, .compare-val { font-size: 0.72rem; overflow-wrap: anywhere; }
+  .filters-actions { flex-direction: column; }
+  .btn { white-space: normal; }
+  .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .card { padding: 0.9rem; }
+  .map-label, .map-campus-label { display: none; }
+  .stat-strip dd { font-size: 1rem; }
+  .site-nav a { padding: 0.35rem 0.4rem; font-size: 0.78rem; }
+  .brand-text { display: none; }
 }

@@ -179,11 +179,9 @@ function buildSlider(key) {
   const r = RANGES[key];
   const holder = document.getElementById(r.sliderId);
   holder.innerHTML = `
-    <div class="slider-top">
-      <div class="slider-track"><span class="slider-fill" data-fill></span></div>
-      <input type="range" data-role="lo" min="${r.min}" max="${r.max}" step="${r.step}" aria-label="${key} minimum">
-      <input type="range" data-role="hi" min="${r.min}" max="${r.max}" step="${r.step}" aria-label="${key} maximum">
-    </div>
+    <div class="slider-track"><span class="slider-fill" data-fill></span></div>
+    <input type="range" data-role="lo" min="${r.min}" max="${r.max}" step="${r.step}" aria-label="${key} minimum">
+    <input type="range" data-role="hi" min="${r.min}" max="${r.max}" step="${r.step}" aria-label="${key} maximum">
     <output class="slider-out" data-out></output>`;
 
   const lo = holder.querySelector('[data-role="lo"]');
@@ -657,12 +655,6 @@ async function boot() {
     console.error(err);
     loading.innerHTML = '<div class="loading-box"><p>Could not load the data file. Please reload the page.</p></div>';
     return;
-  }
-
-  // Insight prose lives in insights.js so the numbers can be checked in one place.
-  for (const key of ['proximity', 'tax', 'timing']) {
-    const node = document.getElementById(`insight-${key}`);
-    if (node && typeof INSIGHTS_TEXT !== 'undefined' && INSIGHTS_TEXT[key]) node.textContent = INSIGHTS_TEXT[key];
   }
 
   STATE.filters = readURL();
